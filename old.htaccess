@@ -1,0 +1,14 @@
+#redirect all request to public folder if need more secure
+
+#<IfModule mod_rewrite.c>
+#    <IfModule mod_negotiation.c>
+#        Options -MultiViews
+#    </IfModule>
+
+#    RewriteEngine On
+#    RewriteBase /
+
+#   RewriteCond %{HTTP_HOST} ^(www\.)?dev_slim\.local$
+#    RewriteCond %{REQUEST_URI} !^/public/ [NC]
+#    RewriteRule ^(.*)$ public/$1 [L]
+#</IfModule>

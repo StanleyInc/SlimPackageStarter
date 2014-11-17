@@ -20,13 +20,16 @@ class BaseController
         /** queued css files */
         $this->data['css'] = array(
             'internal'  => array(),
-            'external'  => array()
+            'external'  => array(),
+            'minify' => array()
         );
 
         /** queued js files */
         $this->data['js'] = array(
             'internal'  => array(),
-            'external'  => array()
+            'external'  => array(),
+            'minify' => array(),
+            'async' => array()
         );
 
         /** prepared message info */
@@ -42,16 +45,19 @@ class BaseController
         /** base dir for asset file */
         $this->data['baseUrl']  = $this->baseUrl();
         $this->data['assetUrl'] = $this->data['baseUrl'].'assets/';
+        $this->data['assetPath'] = 'assets/';
 
         $this->loadBaseCss();
         $this->loadBaseJs();
 
+        //** publish global variable for js usage */
+        $this->publish('baseUrl',$this->baseUrl());
     }
 
     /**
      * enqueue css asset to be loaded
      * @param  [string] $css     [css file to be loaded relative to base_asset_dir]
-     * @param  [array]  $options [location=internal|external, position=first|last|after:file|before:file]
+     * @param  [array]  $options [location=internal|external|minify, position=first|last|after:file|before:file]
      */
     protected function loadCss($css, $options=array())
     {
@@ -95,7 +101,7 @@ class BaseController
     /**
      * enqueue js asset to be loaded
      * @param  [string] $js      [js file to be loaded relative to base_asset_dir]
-     * @param  [array]  $options [location=internal|external, position=first|last|after:file|before:file]
+     * @param  [array]  $options [location=internal|external|minify, position=first|last|after:file|before:file]
      */
     protected function loadJs($js, $options=array())
     {
@@ -142,7 +148,8 @@ class BaseController
     {
         $this->data['css']         = array(
             'internal'  => array(),
-            'external'  => array()
+            'external'  => array(),
+            'minify' => array()
         );
     }
 
@@ -153,7 +160,8 @@ class BaseController
     {
         $this->data['js']         = array(
             'internal'  => array(),
-            'external'  => array()
+            'external'  => array(),
+            'minify' => array()
         );
     }
 
@@ -172,6 +180,10 @@ class BaseController
         if($key){
             array_splice($this->data['css']['external'],$key[0],1);
         }
+        $key=array_keys($this->data['css']['minify'],$css);
+        if($key){
+            array_splice($this->data['css']['minify'],$key[0],1);
+        }
     }
 
     /**
@@ -188,6 +200,10 @@ class BaseController
         $key=array_keys($this->data['js']['external'],$js);
         if($key){
             array_splice($this->data['js']['external'],$key[0],1);
+        }
+         $key=array_keys($this->data['js']['minify'],$css);
+        if($key){
+            array_splice($this->data['js']['minify'],$key[0],1);
         }
     }
 
@@ -228,10 +244,12 @@ class BaseController
      */
     protected function loadBaseCss()
     {
-        $this->loadCss("bootstrap.min.css");
-        $this->loadCss("font-awesome.min.css");
-        $this->loadCss("sb-admin.css");
-        $this->loadCss("custom.css");
+        $minifyCss = "";
+        $minifyCss .= "/assets/css/admin/bootstrap.min.css,";
+        $minifyCss .= "/assets/css/admin/font-awesome.min.css,";
+        $minifyCss .= "/assets/css/admin/sb-admin.css,"; 
+        $minifyCss .= "/assets/css/admin/custom.css&minify=true"; 
+        $this->loadCss($minifyCss,array("location" => "minify"));
     }
 
     /**
@@ -239,10 +257,12 @@ class BaseController
      */
     protected function loadBaseJs()
     {
-        $this->loadJs("jquery-1.10.2.js");
-        $this->loadJs("bootstrap.min.js");
-        $this->loadJs("plugins/metisMenu/jquery.metisMenu.js");
-        $this->loadJs("sb-admin.js");
+        $minifyJs = "";
+        $minifyJs .= "/assets/js/admin/jquery-1.10.2.js,";
+        $minifyJs .= "/assets/js/admin/bootstrap.min.js,";
+        $minifyJs .= "/assets/js/admin/plugins/metisMenu/jquery.metisMenu.js,";
+        $minifyJs .= "/assets/js/admin/sb-admin.js&minify=true";
+        $this->loadJs($minifyJs,array("location" => "minify"));
     }
 
     /**
@@ -250,7 +270,10 @@ class BaseController
      */
     protected function baseUrl()
     {
-        $path       = dirname($_SERVER['SCRIPT_NAME']);
+        //original base path way,not working on windows environment
+        //$path       = dirname($_SERVER['SCRIPT_NAME']);
+        //improved to be working on windows environment
+        $path       = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/.\\');
         $path       = trim($path, '/');
         $baseUrl    = Request::getUrl();
         $baseUrl    = trim($baseUrl, '/');

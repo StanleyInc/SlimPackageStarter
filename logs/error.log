@@ -1,0 +1,12 @@
+[Mon Nov 17 17:34:00.728283 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59965] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here, referer: http://dev_slim.local/
+[Mon Nov 17 17:34:06.931697 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59967] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:34:47.890382 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59970] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:34:49.048784 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59971] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:35:12.713633 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59974] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:35:13.899236 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59975] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:35:14.856838 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59976] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:35:15.153238 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59977] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:35:46.403304 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59979] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:35:47.426307 2014] [core:alert] [pid 3980:tid 1752] [client 127.0.0.1:59980] F:/projects/my/dev_slim/.htaccess: AccessFileName not allowed here
+[Mon Nov 17 17:50:29.934936 2014] [core:alert] [pid 3980:tid 1744] [client 127.0.0.1:60138] F:/projects/my/dev_slim/.htaccess: AllowOverride not allowed here
+[Mon Nov 17 17:50:38.349153 2014] [core:alert] [pid 3980:tid 1744] [client 127.0.0.1:60141] F:/projects/my/dev_slim/.htaccess: AllowOverride not allowed here

@@ -7,7 +7,7 @@ define('ROOT_PATH'  , __DIR__.'/../../');
 define('VENDOR_PATH', __DIR__.'/../../vendor/');
 define('APP_PATH'   , __DIR__.'/../../app/');
 define('MODULE_PATH', __DIR__.'/../../app/modules/');
-define('PUBLIC_PATH', __DIR__.'/../../public/');
+define('PUBLIC_PATH', __DIR__.'/../../');
 
 require VENDOR_PATH.'autoload.php';
 use SlimServices\ServiceManager;
@@ -25,6 +25,13 @@ $config = array(
 foreach (glob(APP_PATH.'config/*.php') as $configFile) {
     require $configFile;
 }
+
+/** looping all custom use class in vendor/use folder */
+foreach (glob(VENDOR_PATH.'custom_use/*.php') as $configFile) {
+    require $configFile;
+}
+//global use phpmailer class for email sending
+require VENDOR_PATH.'phpmailer/PHPMailerAutoload.php';
 
 /** Merge cookies config to slim config */
 if(isset($config['cookies'])){
@@ -47,6 +54,9 @@ $services->registerServices(array(
 ));
 
 $starter    = new \SlimStarter\Bootstrap($app);
+$app->notFound(function () use ($app) {
+    $app->render('404.html');
+});
 
 $starter->setConfig($config);
 
