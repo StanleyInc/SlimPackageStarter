@@ -52,6 +52,9 @@ class BaseController
 
         //** publish global variable for js usage */
         $this->publish('baseUrl',$this->baseUrl());
+        $this->publish('assetUrl',$this->data['baseUrl'].'assets/');
+        $this->publish('assetPath','assets/');
+
     }
 
     /**
@@ -161,7 +164,8 @@ class BaseController
         $this->data['js']         = array(
             'internal'  => array(),
             'external'  => array(),
-            'minify' => array()
+            'minify' => array(),
+            'async' => array()
         );
     }
 
@@ -201,9 +205,13 @@ class BaseController
         if($key){
             array_splice($this->data['js']['external'],$key[0],1);
         }
-         $key=array_keys($this->data['js']['minify'],$css);
+         $key=array_keys($this->data['js']['minify'],$js);
         if($key){
             array_splice($this->data['js']['minify'],$key[0],1);
+        }
+         $key=array_keys($this->data['js']['async'],$js);
+        if($key){
+            array_splice($this->data['js']['async'],$key[0],1);
         }
     }
 
@@ -245,8 +253,8 @@ class BaseController
     protected function loadBaseCss()
     {
         $minifyCss = "";
-        $minifyCss .= "/assets/css/admin/bootstrap.min.css,";
-        $minifyCss .= "/assets/css/admin/font-awesome.min.css,";
+        $minifyCss .= "/assets/css/admin/font-awesome.css,";
+        $minifyCss .= "/assets/css/admin/bootstrap.css,";
         $minifyCss .= "/assets/css/admin/sb-admin.css,"; 
         $minifyCss .= "/assets/css/admin/custom.css&minify=true"; 
         $this->loadCss($minifyCss,array("location" => "minify"));
@@ -259,7 +267,7 @@ class BaseController
     {
         $minifyJs = "";
         $minifyJs .= "/assets/js/admin/jquery-1.10.2.js,";
-        $minifyJs .= "/assets/js/admin/bootstrap.min.js,";
+        $minifyJs .= "/assets/js/admin/bootstrap.js,";
         $minifyJs .= "/assets/js/admin/plugins/metisMenu/jquery.metisMenu.js,";
         $minifyJs .= "/assets/js/admin/sb-admin.js&minify=true";
         $this->loadJs($minifyJs,array("location" => "minify"));
@@ -273,6 +281,7 @@ class BaseController
         //original base path way,not working on windows environment
         //$path       = dirname($_SERVER['SCRIPT_NAME']);
         //improved to be working on windows environment
+        
         $path       = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/.\\');
         $path       = trim($path, '/');
         $baseUrl    = Request::getUrl();
