@@ -44,7 +44,7 @@ class BaseController
 
         /** base dir for asset file */
         $this->data['baseUrl']  = $this->baseUrl();
-        $this->publish('basePath','/');
+        $this->data['basePath']  = '/';
         $this->data['assetUrl'] = $this->data['baseUrl'].'assets/';
         $this->data['assetPath'] = 'assets/';
 
@@ -53,6 +53,7 @@ class BaseController
 
         //** publish global variable for js usage */
         $this->publish('baseUrl',$this->baseUrl());
+        $this->publish('basePath','/');
         $this->publish('assetUrl',$this->data['baseUrl'].'assets/');
         $this->publish('assetPath','assets/');
 
