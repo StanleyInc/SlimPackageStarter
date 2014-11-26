@@ -22,11 +22,11 @@
     {% for cssfile in css.internal %}
     <link rel="stylesheet" href="{{assetUrl}}css/{{cssfile}}" />
     {% endfor %}
-    {% for cssfile in css.minify %}
-    <link rel="stylesheet" href="/munee.php?files={{cssfile}}" />
+     {% for cssfile in css.minify %}
+    <link rel="stylesheet" href="{{basePath}}munee.php?files={{cssfile}}" />
     {% endfor %}
      {% for jsfile in js.async %}
-    <script src="/munee.php?files={{jsfile}}" async defer></script>
+    <script src="{{basePath}}munee.php?files={{jsfile}}" async defer></script>
     {% endfor %}
 </head>
 <body>
@@ -41,7 +41,7 @@
     <script src="{{assetUrl}}js/{{jsfile}}"></script>
     {% endfor %}
     {% for jsfile in js.minify %}
-    <script src="/munee.php?files={{jsfile}}"></script>
+    <script src="{{basePath}}munee.php?files={{jsfile}}"></script>
     {% endfor %}
 </body>
 </html>
