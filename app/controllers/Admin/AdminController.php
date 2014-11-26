@@ -7,6 +7,7 @@ use \View;
 use \Input;
 use \Sentry;
 use \Response;
+use \Cartalyst;
 
 class AdminController extends BaseController
 {
@@ -58,6 +59,62 @@ class AdminController extends BaseController
             }
 
             Response::redirect($this->siteUrl($redirect));
+        }catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
+            $message = 'Login field is required.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
+        } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
+            $message = 'Password field is required.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
+        } catch (Cartalyst\Sentry\Users\WrongPasswordException $e) {
+            $message = 'Wrong login info, try again.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
+        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+            $message = 'Wrong login info, try again.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
+        } catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
+            $message = 'User is not activated.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
+        } catch (Cartalyst\Sentry\Throttling\UserSuspendedException $e) {
+            $message = 'User is suspended.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
+        } catch (Cartalyst\Sentry\Throttling\UserBannedException $e) {
+            $message = 'User is banned.';
+            App::flash('message', $message);
+            App::flash('email', $email);
+            App::flash('redirect', $redirect);
+            App::flash('remember', $remember);
+
+            Response::redirect($this->siteUrl('login'));
         }catch(\Exception $e){
             App::flash('message', $e->getMessage());
             App::flash('email', $email);
