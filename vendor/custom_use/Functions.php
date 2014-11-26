@@ -177,13 +177,13 @@ function routeLastPath(){
 function userIsLogin(){
 	if ( ! Sentry::check())
 	{
-		    // User is not logged in, or is not activated
+		// User is not logged in, or is not activated
 		return false;
 	}
 	else
-	{
-		return true;
-		    // User is logged in
+	{	
+		// User is logged in
+		return true;	    
 	}
 }
 

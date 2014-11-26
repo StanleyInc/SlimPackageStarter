@@ -6,6 +6,8 @@ use \App;
 use \View;
 use \Menu;
 use \User;
+use \Group;
+use \User_Group;
 use \Input;
 use \Sentry;
 use \Request;
@@ -28,20 +30,50 @@ class UserController extends BaseController
      */
     public function index($page = 1)
     {
-        $user = Sentry::getUser();
-        $this->data['title'] = 'Users List';
-        $this->data['users'] = User::where('id', '<>', $user->id)
-                               ->get()
-                               ->toArray();
+        if(userIsLogin()){
+            $user = Sentry::getUser();
+        }else{
+            App::flash('message', 'Please login below.');
+            Response::redirect($this->siteUrl('login'));
+        }
 
-        /** load the user.js app */
-        $this->loadJs('app/user.js');
+        $controlAccess = routeLastPath().'.'.__FUNCTION__;
 
-        /** publish necessary js  variable */
-        $this->publish('baseUrl', $this->data['baseUrl']);
+        //user access control
+        if ($user->hasAccess($controlAccess))
+        {   
+            $this->data['title']  = 'Users List';
+            $this->data['users']  = User::all()->toArray();
+            $this->data['groups'] = Group::all()->toArray();
 
-        /** render the template */
-        View::display('@usergroup/user/index.twig', $this->data);
+            $i = 0;
+            foreach ($this->data['users'] as $user)
+            {
+                $groupinfo = User_Group::where('user_id','=',$user['id'])->get(array('group_id'))->toArray();
+                if($groupinfo){
+                    $this->data['users'][$i]['group'] = $groupinfo[0]['group_id'];
+                }else{
+                    $this->data['users'][$i]['group'] = 0;
+                }
+                $i += 1;
+            }
+
+            /** load the user.js app */
+            $minifyJs = "";
+            $minifyJs .= "/assets/js/admin/app/user.js&minify=true";
+            $this->loadJs($minifyJs,array("location" => "minify"));
+
+            /** publish necessary js  variable */
+            $this->publish('baseUrl', $this->data['baseUrl']);
+
+            /** render the template */
+            View::display('@usergroup/user/index.twig', $this->data);
+        }
+        else
+        {
+            /** render the template */
+            View::display('@usergroup/noaccess.twig', $this->data);
+        }
     }
 
     /**
@@ -52,6 +84,7 @@ class UserController extends BaseController
         if(Request::isAjax()){
             $user = null;
             $message = '';
+            $current_group = '';
 
             try{
                 $user = Sentry::findUserById($id);
@@ -59,6 +92,11 @@ class UserController extends BaseController
                 $message = $e->getMessage();
             }
 
+            $groupinfo = User_Group::where('user_id','=',$id)->get(array('group_id'))->toArray();
+
+            if($groupinfo){
+                $current_group = $groupinfo[0]['group_id'];
+            }
 
             Response::headers()->set('Content-Type', 'application/json');
             Response::setBody(json_encode(
@@ -66,6 +104,7 @@ class UserController extends BaseController
                     'success'   => !is_null($user),
                     'data'      => !is_null($user) ? $user->toArray() : $user,
                     'message'   => $message,
+                    'current_group' => $current_group,
                     'code'      => is_null($user) ? 404 : 200
                 )
             ));
@@ -117,11 +156,21 @@ class UserController extends BaseController
             $user = Sentry::findUserById($id);
 
             $user->email        = $input['email'];
+            $user->username     = $input['username'];
             $user->first_name   = $input['first_name'];
             $user->last_name    = $input['last_name'];
 
             if($input['password']){
                 $user->password = $input['password'];
+            }
+
+            //get user group
+            if($user->getGroups()){
+                $updateusergroup = User_Group::where('user_id', '=', $id)->update(array('group_id' => $input['group']));
+            }else{
+                // Find the group using the group id
+                $assignGroup = Sentry::findGroupById($input['group']);
+                $user->addGroup($assignGroup);
             }
 
             $success = $user->save();
@@ -158,6 +207,7 @@ class UserController extends BaseController
         $user    = null;
         $message = '';
         $success = false;
+        $usergroup = null;
 
         try{
             $input = Input::post();
@@ -171,8 +221,15 @@ class UserController extends BaseController
                 'password'    => $input['password'],
                 'first_name'  => $input['first_name'],
                 'last_name'   => $input['last_name'],
+                'username'    => $input['username'],
                 'activated'   => 1
             ));
+
+            //store user group info
+            $usergroup = new User_Group;
+            $usergroup->group_id = $input['group'];
+            $usergroup->user_id = $user->id;
+            $usergroup->save();
 
             $success = true;
             $message = 'User created successfully';
@@ -207,7 +264,9 @@ class UserController extends BaseController
 
         try{
             $user    = Sentry::findUserById($id);
+            $usergroup = User_Group::where('user_id',$user->id)->get();
             $deleted = $user->delete();
+            $deletedGroup = $usergroup->delete();
             $code    = 200;
         }catch(UserNotFoundException $e){
             $message = $e->getMessage();

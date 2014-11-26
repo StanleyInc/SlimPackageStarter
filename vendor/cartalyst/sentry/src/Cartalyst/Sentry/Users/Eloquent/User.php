@@ -26,8 +26,12 @@ use Cartalyst\Sentry\Users\PasswordRequiredException;
 use Cartalyst\Sentry\Users\UserAlreadyActivatedException;
 use Cartalyst\Sentry\Users\UserExistsException;
 use Cartalyst\Sentry\Users\UserInterface;
+use \Illuminate\Database\Eloquent\SoftDeletingTrait;
 
 class User extends Model implements UserInterface {
+	use SoftDeletingTrait;
+
+    protected $dates = ['deleted_at'];
 
 	/**
 	 * The table associated with the model.
