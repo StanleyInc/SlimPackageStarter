@@ -34,7 +34,7 @@ class UserController extends BaseController
             $user = Sentry::getUser();
         }else{
             App::flash('message', 'Please login below.');
-            Response::redirect($this->siteUrl('login'));
+            return Response::redirect($this->siteUrl('login'));
         }
 
         $controlAccess = routeLastPath().'.'.__FUNCTION__;
@@ -264,9 +264,7 @@ class UserController extends BaseController
 
         try{
             $user    = Sentry::findUserById($id);
-            $usergroup = User_Group::where('user_id',$user->id)->get();
             $deleted = $user->delete();
-            $deletedGroup = $usergroup->delete();
             $code    = 200;
         }catch(UserNotFoundException $e){
             $message = $e->getMessage();

@@ -20,6 +20,7 @@ $(function(){
             this.reset();
         });
         $('#btn-user-save').attr('data-method', 'POST');
+        $('#user-modal').modal({ backdrop: 'static', keyboard: false });
         $('#user-modal').modal('show');
     });
 
@@ -43,8 +44,13 @@ $(function(){
                 for(var a in $user){
                     $('#user_'+a).val($user[a]);
                 }
+                
+                if(resp.current_group){
+                    $('#group').val(resp.current_group);                 
+                }
 
                 $('#btn-user-save').attr('data-method', 'PUT');
+                $('#user-modal').modal({ backdrop: 'static', keyboard: false }); 
                 $('#user-modal').modal('show');
             }else{
                 alert(resp.message);
@@ -123,6 +129,7 @@ $(function(){
                         $('#user-table').append(
                             '<tr id="user-row-'+resp.data.id+'">'+
                                 '<td>'+user.id+'</td>'+
+                                '<td>'+user.username+'</td>'+    
                                 '<td>'+user.first_name+'</td>'+
                                 '<td>'+user.last_name+'</td>'+
                                 '<td>'+user.email+'</td>'+
@@ -134,9 +141,10 @@ $(function(){
                         );
                     }else{
                         var $fields = $('#user-row-'+resp.data.id+' td');
-                        $($fields[1]).html(user.first_name);
-                        $($fields[2]).html(user.last_name);
-                        $($fields[3]).html(user.email);
+                        $($fields[1]).html(user.username);
+                        $($fields[2]).html(user.first_name);
+                        $($fields[3]).html(user.last_name);
+                        $($fields[4]).html(user.email);
                     }
 
                     /** reset the form and hide modal form */
@@ -152,5 +160,9 @@ $(function(){
                 }
             }
         });
+    });
+
+    $('#datatable_user').dataTable({
+        stateSave: true
     });
 });
